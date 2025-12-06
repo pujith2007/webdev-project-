@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Speech to Text – Premium</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+    body {
+      margin: 0;
+      font-family: Inter, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+
+      background: #0F172A;  /* Premium Navy */
+      color: #E2E8F0;
+    }
+
+    .container {
+      width: 450px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(16px);
+      padding: 30px;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,0.07);
+      box-shadow: 0 20px 55px rgba(0,0,0,0.55);
+      animation: fadeIn 0.5s ease;
+    }
+
+    h2 {
+      margin: 0 0 18px;
+      font-weight: 600;
+      font-size: 22px;
+      text-align: center;
+      color: #F8FAFC;
+      letter-spacing: 0.5px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      font-size: 15px;
+      resize: none;
+
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: #F1F5F9;
+      outline: none;
+      transition: 0.25s;
+    }
+
+    textarea:focus {
+      border-color: #64748B;
+      box-shadow: 0 0 0 2px #64748B55;
+    }
+
+    .btns {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+
+      background: #1E293B;
+      color: #F1F5F9;
+      border: 1px solid #334155;
+      transition: 0.25s;
+    }
+
+    button:hover {
+      background: #334155;
+      transform: translateY(-2px);
+    }
+
+    #saveBtn {
+      background: #334155;
+      border-color: #475569;
+    }
+
+    #saveBtn:hover {
+      background: #475569;
+    }
+
+    .notes-title {
+      margin-top: 26px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #CBD5E1;
+    }
+
+    #notes {
+      margin-top: 12px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+
+    .note {
+      background: #1E293B;
+      border: 1px solid #334155;
+      color: #E2E8F0;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+
+      box-shadow: 0 7px 18px rgba(0,0,0,0.45);
+      animation: slideIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(7px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h2>Speech-to-Text Pad</h2>
+
+  <textarea id="textbox" rows="7" placeholder="Start speaking..."></textarea>
+
+  <div class="btns">
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="saveBtn">Save</button>
+  </div>
+
+  <div class="notes-title">Saved Notes</div>
+  <div id="notes"></div>
+</div>
+
+<script>
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+
+  const textbox = document.getElementById("textbox");
+  const notesDiv = document.getElementById("notes");
+
+  recognition.interimResults = true;
+  recognition.continuous = true;
+
+  document.getElementById("startBtn").onclick = () => {
+    recognition.start();
+  };
+
+  document.getElementById("stopBtn").onclick = () => {
+    recognition.stop();
+  };
+
+  recognition.onresult = (event) => {
+    let text = "";
+    for (let i = 0; i < event.results.length; i++) {
+      text += event.results[i][0].transcript;
+    }
+    textbox.value = text;
+  };
+
+  document.getElementById("saveBtn").onclick = () => {
+    const content = textbox.value.trim();
+    if (!content) return;
+
+    const note = document.createElement("div");
+    note.className = "note";
+    note.textContent = content;
+
+    notesDiv.appendChild(note);
+    textbox.value = "";
+  };
+</script>
+
+</body>
+</html>
+
